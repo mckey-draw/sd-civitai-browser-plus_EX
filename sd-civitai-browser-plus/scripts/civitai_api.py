@@ -27,7 +27,8 @@ def contenttype_folder(content_type, desc=None, fromCheck=False, custom_folder=N
     use_LORA = getattr(opts, "use_LORA", False)
     folder = None
     if desc:
-        desc = desc.upper()
+#        desc = desc.upper()
+        desc = str(desc).upper()    # 安全に変換
     else:
         desc = "PLACEHOLDER"
     if custom_folder:
@@ -198,7 +199,8 @@ def model_list_html(json_data):
                             if isinstance(json_file, dict):
                                 sha256 = json_file.get('sha256')
                                 if sha256:
-                                    existing_files_sha256.add(sha256.upper())
+#                                    existing_files_sha256.add(sha256.upper())
+                                    existing_files_sha256.add(str(sha256).upper())    # 安全に変換
                             else:
                                 print(f"Invalid JSON data in {json_path}. Expected a dictionary.")
                         except Exception as e:
@@ -248,7 +250,8 @@ def model_list_html(json_data):
                     file_name = os.path.splitext(file['name'])[0]
                     file_extension = os.path.splitext(file['name'])[1]
                     file_name = f"{file_name}_{file['id']}{file_extension}"
-                    file_sha256 = file.get('hashes', {}).get('SHA256', "").upper()
+#                    file_sha256 = file.get('hashes', {}).get('SHA256', "").upper()
+                    file_sha256 = str(file.get('hashes', {}).get('SHA256', "")).upper()      # 安全に変換
                     
                     #filename_check
                     name_match = file_name.lower() in existing_files
@@ -503,7 +506,8 @@ def update_model_versions(model_id, json_input=None):
             for version in versions:
                 versions_dict[version['name']].append(item["name"])
                 for version_file in version['files']:
-                    file_sha256 = version_file.get('hashes', {}).get('SHA256', "").upper()
+#                    file_sha256 = version_file.get('hashes', {}).get('SHA256', "").upper()
+                    file_sha256 = str(version_file.get('hashes', {}).get('SHA256', "")).upper()      # 安全に変換
                     version_filename = os.path.splitext(version_file['name'])[0]
                     version_extension = os.path.splitext(version_file['name'])[1]
                     version_filename = f"{version_filename}_{version_file['id']}{version_extension}"
@@ -518,7 +522,8 @@ def update_model_versions(model_id, json_input=None):
                                 json_data = json.load(f)
                                 if isinstance(json_data, dict):
                                     if 'sha256' in json_data and json_data['sha256']:
-                                        sha256 = json_data.get('sha256', "").upper()
+#                                        sha256 = json_data.get('sha256', "").upper()
+                                        sha256 = str(json_data.get('sha256', "")).upper()      # 安全に変換
                                         for version_name, _, file_sha256 in version_files:
                                             if sha256 == file_sha256:
                                                 installed_versions.add(version_name)
@@ -881,10 +886,10 @@ def update_model_info(model_string=None, model_version=None, only_html=False, in
                     with open(json_file_path, 'r', encoding="utf-8") as f:
                         try:
                             data = json.load(f)
-#                            sha256 = data.get('sha256')
-#                            if sha256:
+                            sha256 = data.get('sha256')
+                            if sha256:
 #                                sha256 = sha256.upper()
-                            sha256 = str(data.get('sha256', '')).upper()  # 安全に変換
+                                sha256 = str(sha256).upper()    # 安全に変換
                             if sha256 == sha256_value:
                                 folder_location = root
                                 BtnDownInt = False
@@ -1044,7 +1049,8 @@ def update_file_info(model_string, model_version, file_metadata):
                                                     try:
                                                         data = json.load(f)
                                                         sha256_value = data.get('sha256')
-                                                        if sha256_value != None and sha256_value.upper() == sha256:
+#                                                        if sha256_value != None and sha256_value.upper() == sha256:
+                                                        if sha256_value != None and str(sha256_value).upper() == sha256:    # 安全に変換
                                                             folder_location = root
                                                             installed = True
                                                             break
